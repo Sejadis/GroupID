@@ -1,6 +1,0 @@
-## Interface: 80000
-## Title: GroupID
-## Author: Sejadis
-## Version: 0.1
-
-GroupID.lua
