@@ -35,6 +35,14 @@ local function GetFullPlayerName()
 	return name .. "-" .. realm
 end
 
+local function GetFullUnitName(unit)
+	local name, realm = GetUnitName(unit)
+	print(name,realm)
+	if realm ~= nil and realm ~= "" then return name .. "-" .. realm else
+		return name .. "-" .. select(2,UnitFullName("Player")) 
+	end
+end
+
 local function PrintLockout(player)
 	--if(player ~= nil) then for k,v in pairs(playerLockouts) do print(k,v) end return end
 	--for k,v in pairs(playerLockouts[player]) do print(k,v) end
@@ -78,6 +86,7 @@ end
 end
 
 local function CompareToPlayer(player)
+	if(playerLockouts[player] == nil ) then return nil,nil end
 	local playerName = GetFullPlayerName()
 	local availableLockouts = {}
 	local i = 1
@@ -91,6 +100,29 @@ local function CompareToPlayer(player)
 		end
 	end
 	return availableLockouts, (i-1)
+end
+
+local function CompareToGroup()
+--[[	local availableLockouts,lockouts = {},{}
+	local c,f = 1,0
+	local num = GetNumGroupMembers()
+	if(num <= 1) then print("You're not in a group.") return end
+	for i=1,num-1 do
+		local unit = "party" .. i
+		local name = GetFullUnitName(unit)
+		if(playerLockouts[name] == nil) then print("No lockout data available for ", name) return end
+		lockouts[CompareToPlayer(name)] = true
+		c = c + 1 
+	end
+	for i=1,c do
+		local exists = true
+		for j=1,c do
+			if(j ~= i) then 
+				if(lockouts[])
+		 	end 
+		end
+	end
+	]]
 end
 
 local function MyAddonCommands(msg, editbox)
@@ -127,13 +159,32 @@ if command == 'print' then
 	end	
 if command == "compare" and arg1 ~= nil then
 	local t,c
-	if(arg1 == "self") then t,c = CompareToPlayer(GetFullPlayerName())
+	if(arg1 == "self") then print("compare to self") t,c = CompareToPlayer(GetFullPlayerName())
+	elseif arg1 == "group" then
+		print("comparetogroup")
+		t,c = CompareToGroup()	
 	else
+		print("compare to player")
 	 t,c = CompareToPlayer(arg1)
 	end
 	print("Available Lockouts shared with ", arg1, ":")
-	for i=1,c do 
-		print(green,t[c], "|r")
+	if t == nil then print("No Lockout data available for ", arg1) return end
+	if c == 0 then print("No lockouts shared.") 
+	else
+		for i=1,c do 
+			print(green,t[c], "|r")
+		end
+	end
+end
+
+if command == "group" then
+	local c = GetNumGroupMembers()
+	if c <= 1 then return end
+	for i=1,c-1 do
+		local unit = "party" .. i
+		print(unit)
+		local name = GetFullUnitName(unit)
+		print(name)
 	end
 end
 end
@@ -145,6 +196,7 @@ EventFrame:SetScript("OnEvent",
 		print("Loadup complete");
 	    local ok = C_ChatInfo.RegisterAddonMessagePrefix("GID_SYNC_REQUEST");
 		local ok2 = C_ChatInfo.RegisterAddonMessagePrefix("GID_ID");
+		SendIDs();
 	end
 )
 
@@ -160,7 +212,7 @@ function(_, event, prefix, message, _, sender)
 
 		if((sender == GetFullPlayerName()) and (message == "false")) then return end
 		--StaticPopup_Show ("GroupID_Request", sender);
-		SendIDs()
+		C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "true", "GUILD");
 	end;
 	if(prefix == "GID_ID") then 
 		local dungeon, progress, rest = strsplit(";",message,3)
