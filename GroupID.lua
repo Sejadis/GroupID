@@ -75,12 +75,23 @@ local function AddPlayerLockout(sender, lockout, progress)
 end
 
 	if(setContains(playerLockouts[sender],lockout)) then playerLockouts[sender][lockout].Progress = progress end
-	--if(lockout == "Atal'Dazar") then playerLockouts[sender]["Atal'Dazar"].progress = progress end
-	--PrintLockout(sender)
-	--PrintLockout()
 end
 
+local function CompareToPlayer(player)
+	local playerName = GetFullPlayerName()
+	local availableLockouts = {}
+	local i = 1
+	for k in pairs(playerLockouts[playerName]) do
+		local p1 = playerLockouts[player][k]
+		local p2 = playerLockouts[playerName][k]
 
+		if (tonumber(p1.Progress) < tonumber(p1.Encounters)) and  (tonumber(p2.Progress) < tonumber(p2.Encounters)) then
+			availableLockouts[i] = k
+			i = i + 1 
+		end
+	end
+	return availableLockouts, (i-1)
+end
 
 local function MyAddonCommands(msg, editbox)
 	local command, arg1, rest = strsplit(" ",msg,3)
@@ -114,6 +125,17 @@ if command == 'print' then
 	if(arg1 ~= nil)then PrintLockout2(arg1) return end
 	PrintLockout2(playerName)
 	end	
+if command == "compare" and arg1 ~= nil then
+	local t,c
+	if(arg1 == "self") then t,c = CompareToPlayer(GetFullPlayerName())
+	else
+	 t,c = CompareToPlayer(arg1)
+	end
+	print("Available Lockouts shared with ", arg1, ":")
+	for i=1,c do 
+		print(green,t[c], "|r")
+	end
+end
 end
 
 local EventFrame = CreateFrame("Frame")
