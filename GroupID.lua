@@ -190,7 +190,7 @@ end
 end
 
 local EventFrame = CreateFrame("Frame")
-EventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+EventFrame:RegisterEvent("PLAYER_LOGIN")
 EventFrame:SetScript("OnEvent",
     function(self, event, ...)
 		print("Loadup complete");
