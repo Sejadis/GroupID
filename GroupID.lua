@@ -159,7 +159,8 @@ function(_, event, prefix, message, _, sender)
 	if(prefix == "GID_SYNC_REQUEST") then 
 
 		if((sender == GetFullPlayerName()) and (message == "false")) then return end
-		StaticPopup_Show ("GroupID_Request", sender);
+		--StaticPopup_Show ("GroupID_Request", sender);
+		SendIDs()
 	end;
 	if(prefix == "GID_ID") then 
 		local dungeon, progress, rest = strsplit(";",message,3)
