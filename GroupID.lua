@@ -205,14 +205,15 @@ local EventFrame2 = CreateFrame("Frame")
 EventFrame2:RegisterEvent("CHAT_MSG_ADDON")
 EventFrame2:SetScript("OnEvent",
 function(_, event, prefix, message, _, sender)
-	if not(prefix:sub(1, 3) == "GID") then return end
 	--print(event, prefix,message,sender);
+	if not(prefix:sub(1, 3) == "GID") then return end
 
 	if(prefix == "GID_SYNC_REQUEST") then 
 
 		if((sender == GetFullPlayerName()) and (message == "false")) then return end
 		--StaticPopup_Show ("GroupID_Request", sender);
-		C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "true", "GUILD");
+		C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "false", "GUILD");
+		SendIDs()
 	end;
 	if(prefix == "GID_ID") then 
 		local dungeon, progress, rest = strsplit(";",message,3)
