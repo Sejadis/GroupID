@@ -212,7 +212,6 @@ function(_, event, prefix, message, _, sender)
 
 		if((sender == GetFullPlayerName()) and (message == "false")) then return end
 		--StaticPopup_Show ("GroupID_Request", sender);
-		C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "false", "GUILD");
 		SendIDs()
 	end;
 	if(prefix == "GID_ID") then 
