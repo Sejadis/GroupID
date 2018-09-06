@@ -2,6 +2,7 @@ local playerLockouts = {}
 local red = "|cffFF0000"
 local green = "|cff00FF00"
 local blue = "|cff0000FF"
+local version = "0001"
 
 local function dump(o)
 	if type(o) == 'table' then
@@ -197,6 +198,7 @@ EventFrame:SetScript("OnEvent",
 	    local ok = C_ChatInfo.RegisterAddonMessagePrefix("GID_SYNC_REQUEST");
 		local ok2 = C_ChatInfo.RegisterAddonMessagePrefix("GID_ID");
 		SendIDs();
+		local str = "GID loaded. v" .. version
 	end
 )
 
