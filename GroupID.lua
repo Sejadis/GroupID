@@ -44,6 +44,12 @@ local function GetFullUnitName(unit)
 	end
 end
 
+local function SyncRequest(includeSelf)
+	if(includeSelf) then C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "true", "GUILD")
+	else C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "false", "GUILD")
+	end
+end
+
 local function PrintLockout(player)
 	--if(player ~= nil) then for k,v in pairs(playerLockouts) do print(k,v) end return end
 	--for k,v in pairs(playerLockouts[player]) do print(k,v) end
@@ -147,10 +153,10 @@ local function MyAddonCommands(msg, editbox)
 			end
 	end
 if command == 'g' then
-	C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "false", "GUILD");
+	SyncRequest(false)
 	end
 if command == 'self' then
-	C_ChatInfo.SendAddonMessage("GID_SYNC_REQUEST", "true", "GUILD");
+	SyncRequest(true)
 	end	
 if command == 'print' then
 	local playerName = GetFullPlayerName()
@@ -193,12 +199,19 @@ end
 local EventFrame = CreateFrame("Frame")
 EventFrame:RegisterEvent("PLAYER_LOGIN")
 EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
-		print("Loadup complete");
+	function(self, event, ...)
 	    local ok = C_ChatInfo.RegisterAddonMessagePrefix("GID_SYNC_REQUEST");
 		local ok2 = C_ChatInfo.RegisterAddonMessagePrefix("GID_ID");
-		SendIDs();
+		
 		local str = "GID loaded. v" .. version
+		if ok and ok2 then 
+			SyncRequest(true)
+			--str = str .. " Prefixes registered"
+		else
+			--str = str .. " Prefixregistration failed"
+		end
+		print(str);
+		
 	end
 )
 
